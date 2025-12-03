@@ -1,0 +1,53 @@
+name: ci - pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  ui-tests:
+    name: UI Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1) Obtener el código
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2) Configurar JDK
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'          # cámbialo si tu proyecto usa otra versión
+          distribution: 'temurin'
+
+      # 3) Configurar Gradle (cache + wrapper)
+      - name: Set up Gradle
+        uses: gradle/gradle-build-action@v3
+
+      # 4) Configurar Chrome para Selenium
+      - name: Set up Chrome
+        uses: browser-actions/setup-chrome@v1
+
+      # 5) Ejecutar pruebas
+      #    - Si tu build.gradle está en un submódulo, añade working-directory
+      - name: Run UI tests
+        run: gradle clean test --no-daemon
+
+      # 6) Subir reporte Serenity como artifact para trazabilidad
+      - name: Upload Serenity report
+        if: always()                 # se sube aunque los tests fallen
+        uses: actions/upload-artifact@v4
+        with:
+          name: serenity-report
+          path: target/site/serenity/
+
+      # 7) Guardar reporte de tests JUnit (para que GitHub muestre resumen)
+      - name: Upload JUnit test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: junit-test-results
+          path: build/test-results/test/

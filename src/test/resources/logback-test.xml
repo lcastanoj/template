@@ -1,7 +1,18 @@
 <configuration>
 
-    <logger name="org.apache.hc.client5.http.wire" level="OFF"/>
+    <!-- Reducir ruido de Selenium y librerías externas -->
+    <logger name="org.openqa.selenium" level="WARN"/>
+    <logger name="org.openqa.selenium.devtools" level="WARN"/>
+    <logger name="org.openqa.selenium.chromium" level="WARN"/>
     <logger name="io.github.bonigarcia.wdm" level="ERROR"/>
+
+    <!-- Reducir ruido de fotografía/darkroom de Serenity -->
+    <logger name="net.serenitybdd.core.photography" level="WARN"/>
+    <logger name="net.serenitybdd.screenplay.targets.IFrameSwitcher" level="WARN"/>
+
+    <!-- Screenplay y Steps solo mostrando lo esencial -->
+    <logger name="net.serenitybdd.screenplay" level="INFO"/>
+    <logger name="net.serenitybdd.core.steps" level="INFO"/>
 
     <root level="INFO">
         <appender-ref ref="STDOUT"/>
